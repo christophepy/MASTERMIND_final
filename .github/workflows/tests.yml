@@ -40,7 +40,10 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
-    - name: Run tests
-      run: poetry run pytest
+    - name: Start virtual display and run tests
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: poetry run pytest
+
 
 
