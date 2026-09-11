@@ -1,14 +1,11 @@
-# MASTERMIND_final/tests/test_controller_player.py
+# tests/test_controller_player.py
 
+import pytest
 from PyQt6.QtWidgets import QToolBar
 from PyQt6.QtCore import Qt
 
-def test_player_mode_initial(setup_app):
-    window, controller, qtbot = setup_app
-    controller.set_mode("player")
-    assert controller.state.current_row == 0
 
-
+@pytest.mark.gui
 def test_player_validates_first_row(setup_app):
     window, controller, qtbot = setup_app
 
@@ -21,11 +18,12 @@ def test_player_validates_first_row(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
-    assert controller.state.current_row == 0
+    assert controller.state.current_row == 1
 
 
+@pytest.mark.gui
 def test_player_wins(setup_app):
     window, controller, qtbot = setup_app
 
@@ -38,7 +36,9 @@ def test_player_wins(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
-    assert controller.state.current_row == 0
+    assert controller.state.game_over is True
+    assert controller.state.player_won is True
+
 

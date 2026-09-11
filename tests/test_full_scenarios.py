@@ -1,9 +1,13 @@
-# MASTERMIND_final/tests/test_full_scenarios.py
+# tests/test_full_scenarios.py
 
+import pytest
 from PyQt6.QtWidgets import QToolBar
 from PyQt6.QtCore import Qt
+
 from model.evaluator import score
 
+
+@pytest.mark.gui
 def test_scenario_player_wins(setup_app):
     window, controller, qtbot = setup_app
 
@@ -17,11 +21,13 @@ def test_scenario_player_wins(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
-    assert controller.state.current_row == 0
+    assert controller.state.game_over is True
+    assert controller.state.player_won is True
 
 
+@pytest.mark.gui
 def test_scenario_computer_finds_code(setup_app):
     window, controller, qtbot = setup_app
 
@@ -34,7 +40,7 @@ def test_scenario_computer_finds_code(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
     for _ in range(12):
         guess = controller.engine.current_guess
@@ -50,14 +56,16 @@ def test_scenario_computer_finds_code(setup_app):
             else:
                 fb.setStyleSheet("background-color: #f5e9d3;")
 
-        qtbot.mouseClick(validate_btn, Qt.LeftButton)
+        qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
         if blacks == 5:
+            assert controller.state.current_row <= 11
             return
 
-    assert False, "L'ordinateur n'a pas trouvé le code"
+    assert False, "L'ordinateur n'a pas trouvé le code en 12 coups"
 
 
+@pytest.mark.gui
 def test_scenario_player_loses(setup_app):
     window, controller, qtbot = setup_app
 
@@ -74,8 +82,9 @@ def test_scenario_player_loses(setup_app):
         for col in range(5):
             window.board.pion_widgets[(row, col)].set_color(wrong[col])
 
-        qtbot.mouseClick(validate_btn, Qt.LeftButton)
+        qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
-    assert controller.state.is_game_over() is True
+    assert controller.state.game_over is True
+    assert controller.state.player_won is False
 
 

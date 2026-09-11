@@ -1,20 +1,13 @@
 # tests/test_controller_computer.py
 
-# tests/test_controller_computer.py
-
-import os
 import pytest
 from PyQt6.QtWidgets import QToolBar
 from PyQt6.QtCore import Qt
 
 from model.evaluator import score
 
-# Skip complet du module en environnement CI (GitHub Actions)
-if os.getenv("CI") == "true":
-    pytest.skip("Tests GUI PyQt6 désactivés en CI (Qt6 instable sur runner GitHub).", allow_module_level=True)
 
-
-
+@pytest.mark.gui
 def test_computer_mode_initial(setup_app):
     window, controller, qtbot = setup_app
 
@@ -24,6 +17,7 @@ def test_computer_mode_initial(setup_app):
     assert controller.engine.current_guess is None
 
 
+@pytest.mark.gui
 def test_computer_first_guess(setup_app):
     window, controller, qtbot = setup_app
 
@@ -36,13 +30,14 @@ def test_computer_first_guess(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
     guess = controller.engine.current_guess
     assert guess is not None
     assert len(guess) == 5
 
 
+@pytest.mark.gui
 def test_computer_feedback_and_next_guess(setup_app):
     window, controller, qtbot = setup_app
 
@@ -55,7 +50,7 @@ def test_computer_feedback_and_next_guess(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
     guess = controller.engine.current_guess
 
     blacks, whites = score(guess, secret)
@@ -69,12 +64,13 @@ def test_computer_feedback_and_next_guess(setup_app):
         else:
             fb.setStyleSheet("background-color: #f5e9d3;")
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
     assert controller.state.current_row == 1
     assert controller.engine.current_guess is not None
 
 
+@pytest.mark.gui
 def test_computer_converges_simple_secret(setup_app):
     window, controller, qtbot = setup_app
 
@@ -87,7 +83,7 @@ def test_computer_converges_simple_secret(setup_app):
     toolbar = window.findChild(QToolBar)
     validate_btn = toolbar.widgetForAction(window.action_validate)
 
-    qtbot.mouseClick(validate_btn, Qt.LeftButton)
+    qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
     for _ in range(12):
         guess = controller.engine.current_guess
@@ -103,13 +99,14 @@ def test_computer_converges_simple_secret(setup_app):
             else:
                 fb.setStyleSheet("background-color: #f5e9d3;")
 
-        qtbot.mouseClick(validate_btn, Qt.LeftButton)
+        qtbot.mouseClick(validate_btn, Qt.MouseButton.LeftButton)
 
         if blacks == 5:
             assert controller.state.current_row <= 11
             return
 
     assert False, "L'ordinateur n'a pas trouvé le code en 12 coups"
+
 
 
  
