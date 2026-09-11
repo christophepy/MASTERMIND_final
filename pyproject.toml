@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "mastermind"
+version = "1.0.0"
+description = "Jeu Mastermind en Python avec interface PyQt6"
+authors = ["Yannick <email@example.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [
+    { include = "controller" },
+    { include = "model" },
+    { include = "view" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyQt6 = "^6.7"
+numpy = "^1.26"
+
+[tool.poetry.scripts]
+mastermind = "app:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
