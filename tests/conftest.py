@@ -1,7 +1,7 @@
 # tests/conftest.py
 
 import pytest
-from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from unittest.mock import patch
 
 from view.main_window import MainWindow
@@ -9,23 +9,10 @@ from controller.game_controller import GameController
 
 
 # ---------------------------------------------------------------------------
-# FIXTURE Qt6 STABLE POUR CI (QApplication unique)
-# ---------------------------------------------------------------------------
-@pytest.fixture(scope="session")
-def qapp_session():
-    """
-    QApplication unique pour toute la session de tests.
-    Indispensable pour stabiliser PyQt6 + Qt6 en CI (évite les abort).
-    """
-    app = QApplication([])
-    return app
-
-
-# ---------------------------------------------------------------------------
 # FIXTURE POUR LES TESTS GUI (MainWindow + GameController)
 # ---------------------------------------------------------------------------
 @pytest.fixture
-def setup_app(qtbot, qapp_session):
+def setup_app(qtbot):
     """
     Crée une fenêtre MainWindow + un GameController
     et les retourne pour les tests GUI.
@@ -57,4 +44,5 @@ def disable_message_boxes():
          patch.object(QMessageBox, "warning", return_value=None), \
          patch.object(QMessageBox, "critical", return_value=None):
         yield
+
 
